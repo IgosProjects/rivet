@@ -1,10 +1,10 @@
 {
   "name": "@igosprojects/rivet",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Rivet is a small server framework for NodeJS",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-    "files": [
+  "files": [
     "dist",
     "README.md",
     "LICENSE"
@@ -27,7 +27,6 @@
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
   },
-  
   "repository": {
     "type": "git",
     "url": "git+https://github.com/IgosProjects/rivet.git"

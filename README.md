@@ -7,6 +7,11 @@
 
 Rivet is a small typescript based server platform for NodeJS, it is not a replacement of Express or other libraries but is a small remake.
 
+# Installing
+
+To install Rivet you will need to have an NPM project setup.
+Then you can run this command:```npm install @igosprojects/rivet```
+
 # Usage
 
 To use Rivet you first need to install it using your package manager(look at [Installing](#installing)).
@@ -16,7 +21,7 @@ To use Rivet you first need to install it using your package manager(look at [In
 To create a basic server you will need to initilize Rivet, and start the server. The following code does just that:
 ```ts 
 import { IncomingMessage } from 'node:http';
-import { Rivet, RivetResponse } from 'rivet';
+import { Rivet, RivetResponse } from '@igosprojects/rivet';
 
 const app = new Rivet();
 
@@ -33,7 +38,7 @@ app.start(3000);
 Rivet supports serving static files and folders, to do so you can use the ```app.static``` function after initilizing the server. 
 For example this code will serve the public directory next to the file:
 ```ts
-import { Rivet } from '../src/index';
+import { Rivet } from '@igosprojects/rivet';
 
 const app = new Rivet();
 

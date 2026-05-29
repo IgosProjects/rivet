@@ -1,15 +1,21 @@
 {
-  "name": "Rivet",
+  "name": "@igosprojects/rivet",
   "version": "1.0.0",
-  "description": "",
+  "description": "Rivet is a small server framework for NodeJS",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+    "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\""
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [],
   "author": "",
@@ -20,5 +26,14 @@
     "prettier": "^3.8.3",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
-  }
+  },
+  
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IgosProjects/rivet.git"
+  },
+  "bugs": {
+    "url": "https://github.com/IgosProjects/rivet/issues"
+  },
+  "homepage": "https://github.com/IgosProjects/rivet#readme"
 }

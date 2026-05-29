@@ -139,9 +139,9 @@ export class Rivet {
         (req as any).query = query;
 
         // Parse body for POST, PUT, PATCH requests
-        if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
+        if (method === 'POST' || method === 'PUT') {
             try {
-                const body = await parseBody(req);
+                const body = await ParseBody(req);
                 (req as any).body = body;
             } catch (err) {
                 res.writeHead(400, { 'Content-Type': 'application/json' });

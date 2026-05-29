@@ -1,5 +1,10 @@
 # Rivet
 
+![Version](https://img.shields.io/github/package-json/v/IgosProjects/rivet)
+![License](https://img.shields.io/github/license/IgosProjects/rivet)
+![TypeScript](https://img.shields.io/github/languages/top/IgosProjects/rivet)
+![Lines](https://img.shields.io/tokei/lines/github/IgosProjects/rivet)
+
 Rivet is a small typescript based server platform for NodeJS, it is not a replacement of Express or other libraries but is a small remake.
 
 # Usage

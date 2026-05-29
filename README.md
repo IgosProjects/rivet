@@ -1,0 +1,44 @@
+# Rivet
+
+Rivet is a small typescript based server platform for NodeJS, it is not a replacement of Express or other libraries but is a small remake.
+
+# Usage
+
+To use Rivet you first need to install it using your package manager(look at [Installing](#installing)).
+
+## Creating a basic server
+
+To create a basic server you will need to initilize Rivet, and start the server. The following code does just that:
+```ts 
+import { IncomingMessage } from 'node:http';
+import { Rivet, RivetResponse } from 'rivet';
+
+const app = new Rivet();
+
+// This function is called when the route "/" is called
+app.get('/', (req: IncomingMessage, res: RivetResponse) => {
+    res.send("hi!");
+});
+
+app.start(3000);
+```
+
+## Serving static files
+
+Rivet supports serving static files and folders, to do so you can use the ```app.static``` function after initilizing the server. 
+For example this code will serve the public directory next to the file:
+```ts
+import { Rivet } from '../src/index';
+
+const app = new Rivet();
+
+app.static("/", "./public");
+
+app.start(3000); 
+```
+
+## Reading parameters(/:id)
+
+Rivet can read parameters passed on the URL bar, to do that you can use the ```req.params``` option for that. 
+To read the parameters you can do: ```const { paramname } = req.params;```, now paramname is equal to the parameter if it was passed in.
+To register routes with parameters you shouldnt register ```/users``` but instead ```/users/:id``` otherwise it wont work!

@@ -1,0 +1,19 @@
+// tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,        // generates .d.ts files for TypeScript users
+    "declarationMap": true,     // helps with editor go-to-definition
+    "sourceMap": true,          // debugging
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },  
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "examples"]
+}

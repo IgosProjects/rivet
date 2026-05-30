@@ -3,7 +3,8 @@
     Copyright(c) 2026 EyeDev
 */
 
-import { ServerResponse } from 'node:http';
+import { ServerResponse, IncomingMessage } from 'node:http';
+import type { Rivet } from './rivet';
 
 // New route type, replaced old simple one
 export type Route = {
@@ -30,3 +31,11 @@ export interface CorsOptions {
     headers?: string[];
     credentials?: boolean;
 }
+
+export interface RivetPlugin {
+    name: string;
+    version?: string;
+    install(app: Rivet): void | Promise<void>;
+}
+
+export type Middleware = (req: IncomingMessage, res: RivetResponse, next: () => void) => void;

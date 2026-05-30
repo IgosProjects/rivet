@@ -4,7 +4,7 @@
 */
 
 import http from 'http';
-import type { RivetResponse, RouteHandlers, CorsOptions } from './types';
+import type { RivetResponse, RouteHandlers, CorsOptions, RivetPlugin, Middleware } from './types';
 import { InjectResponseHelpers } from './response';
 import { AddCORSHeader, HandlePreflight } from './cors';
 import { ServeStatic } from './static';
@@ -60,6 +60,9 @@ async function ParseBody(req: IncomingMessage): Promise<any> {
 
 // Main library class
 export class Rivet {
+    private plugins: RivetPlugin[] = [];
+    private middlewares: Middleware[] = [];
+
     private server: Server | null = null;
     routes: {
         GET: RouteHandlers;
@@ -96,6 +99,19 @@ export class Rivet {
             console.log(`Rivet fastened on ${port}`);
             callback?.();
         });
+    }
+
+    // Registers new middleware to run every request
+    UseMiddleware(middleware: Middleware): this {
+        this.middlewares.push(middleware);
+        return this;
+    }
+
+    // Registers a plugin
+    use(plugin: RivetPlugin): this {
+        plugin.install(this); // Call the install function
+        this.plugins.push(plugin);
+        return this;
     }
 
     // Parses a path and returns the regex and parameters
@@ -136,8 +152,24 @@ export class Rivet {
         };
     }
 
-    // Called when an request happends on the server
+    // Called when the server recives an request
     async OnRequest(req: IncomingMessage, res: RivetResponse): Promise<void> {
+        // Run all the middleware
+        let index = 0;
+        const next = async () => {
+            if (index < this.middlewares.length) {
+                const middleware = this.middlewares[index++];
+                await middleware(req, res, next);
+            } else {
+                await this.HandleRoute(req, res);
+            }
+        };
+
+        await next();
+    }
+
+    // Called when after middleware runs
+    async HandleRoute(req: IncomingMessage, res: RivetResponse): Promise<void> {
         // Always apply CORS headers
         AddCORSHeader(res, this.corsOptions);
 

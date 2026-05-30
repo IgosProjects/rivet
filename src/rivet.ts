@@ -163,8 +163,6 @@ export class Rivet {
 
         // If no exact match, try regex
         if (!route) {
-            console.log('No exact match for:', url);
-            console.log('Available patterns:', Object.keys(methodRoutes));
 
             for (const [pattern, r] of Object.entries(methodRoutes)) {
                 if (pattern.endsWith('*')) continue; // Check if "/*" or such

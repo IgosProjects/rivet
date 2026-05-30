@@ -1,6 +1,6 @@
 {
   "name": "@igosprojects/rivet",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Rivet is a small server framework for NodeJS",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -18,7 +18,9 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["rivet"],
+  "keywords": [
+    "rivet"
+  ],
   "author": "EyeDev",
   "license": "MIT",
   "packageManager": "pnpm@10.33.0",

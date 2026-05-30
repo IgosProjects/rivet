@@ -7,7 +7,7 @@ const app = new Rivet();
 
 // This function is called when the route "/" is called
 app.get('/', (req: IncomingMessage, res: RivetResponse) => {
-    res.send("hi!");
+    res.send('hi!');
 });
 
 app.start(3000);

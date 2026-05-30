@@ -4,9 +4,9 @@
 */
 
 import http from 'http';
-import https from 'https';
-import type { RivetResponse, RouteHandlers } from './types';
+import type { RivetResponse, RouteHandlers, CorsOptions } from './types';
 import { InjectResponseHelpers } from './response';
+import { AddCORSHeader, HandlePreflight } from './cors';
 import { ServeStatic } from './static';
 
 import type { IncomingMessage, Server, ServerResponse } from 'http';
@@ -78,6 +78,14 @@ export class Rivet {
         };
     }
 
+    private corsOptions: CorsOptions = {};
+
+    // Allows editing of CORS options before the server is started, or while its running
+    cors(options: CorsOptions): this {
+        this.corsOptions = { ...this.corsOptions, ...options };
+        return this;
+    }
+
     // Starts the HTTP server and serves on the provided port
     start(port: number, callback?: () => void): void {
         this.server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
@@ -130,6 +138,12 @@ export class Rivet {
 
     // Called when an request happends on the server
     async OnRequest(req: IncomingMessage, res: RivetResponse): Promise<void> {
+        // Always apply CORS headers
+        AddCORSHeader(res, this.corsOptions);
+
+        // Handle preflight
+        if (HandlePreflight(req, res)) return;
+
         const method = req.method as keyof typeof this.routes; // Get the HTTP method
         const url = req.url?.split('?')[0] || '/'; // Get the URL and strip the query params
 
@@ -163,7 +177,6 @@ export class Rivet {
 
         // If no exact match, try regex
         if (!route) {
-
             for (const [pattern, r] of Object.entries(methodRoutes)) {
                 if (pattern.endsWith('*')) continue; // Check if "/*" or such
 

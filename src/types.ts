@@ -23,3 +23,10 @@ export type RivetResponse = ServerResponse & {
     json: (data: any) => void;
     SendFile: (filePath: string, contentType?: string) => void;
 };
+
+export interface CorsOptions {
+    origin?: string | string[];
+    methods?: string[];
+    headers?: string[];
+    credentials?: boolean;
+}

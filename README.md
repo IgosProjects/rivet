@@ -5,12 +5,12 @@
 ![TypeScript](https://img.shields.io/github/languages/top/IgosProjects/rivet)
 ![Lines](https://img.shields.io/tokei/lines/github/IgosProjects/rivet)
 
-Rivet is a small typescript based server platform for NodeJS, it is not a replacement of Express or other libraries but is a small remake.
+Rivet is a small Typescript based server platform for NodeJS, it is a Express inspired library for servers
 
 # Installing
 
-To install Rivet you will need to have an NPM project setup.
-Then you can run this command:```npm install @igosprojects/rivet```
+To install Rivet you will need to have an NPM project setup, if not run the necessary commands.
+Then you can run this command to install rivet:```npm install @igosprojects/rivet```
 
 # Usage
 

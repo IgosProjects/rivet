@@ -19,7 +19,12 @@
     "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "rivet"
+    "rivet",
+    "ts",
+    "typescript",
+    "http",
+    "server",
+    "framework"
   ],
   "author": "EyeDev",
   "license": "MIT",

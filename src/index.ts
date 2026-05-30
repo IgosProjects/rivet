@@ -4,4 +4,4 @@
 */
 
 export { Rivet } from './rivet';
-export type { RivetResponse } from './types';
+export type { RivetResponse, RivetPlugin } from './types';

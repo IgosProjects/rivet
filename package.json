@@ -18,7 +18,7 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "prepublishOnly": "npm run build"
   },
-  "keywords": [],
+  "keywords": ["rivet"],
   "author": "EyeDev",
   "license": "MIT",
   "packageManager": "pnpm@10.33.0",

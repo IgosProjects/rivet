@@ -82,6 +82,7 @@ export class Rivet {
     }
 
     private corsOptions: CorsOptions = {};
+    private serverCallbacks: Array<(server: any) => void> = [];
 
     // Allows editing of CORS options before the server is started, or while its running
     cors(options: CorsOptions): this {
@@ -95,6 +96,8 @@ export class Rivet {
             this.OnRequest(req, res as RivetResponse);
         });
 
+        this.serverCallbacks.forEach(cb => cb(this.server)); // Call the callbacks
+
         this.server.listen(port, () => {
             console.log(`Rivet fastened on ${port}`);
             callback?.();
@@ -105,6 +108,12 @@ export class Rivet {
     UseMiddleware(middleware: Middleware): this {
         this.middlewares.push(middleware);
         return this;
+    }
+
+    // Registers a callback to be called when the server starts
+    OnServerCreate(callback: (server: any) => void) {
+        this.serverCallbacks.push(callback);
+        if (this.server) callback(this.server);
     }
 
     // Registers a plugin

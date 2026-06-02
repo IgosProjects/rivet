@@ -2,7 +2,7 @@
 
 import { IncomingMessage } from 'node:http';
 import { Rivet, RivetResponse } from '../src/index';
-import { LoggingPlugin } from '../src/plugins/logging'
+import { LoggingPlugin } from '../src/plugins/logging';
 
 const app = new Rivet();
 

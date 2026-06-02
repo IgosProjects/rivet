@@ -4,7 +4,7 @@
 */
 
 import http from 'http';
-import type { RivetResponse, RouteHandlers, CorsOptions, RivetPlugin, Middleware } from './types';
+import type { RivetResponse, RouteHandlers, CorsOptions, RivetPlugin, Middleware, HttpError } from './types';
 import { InjectResponseHelpers } from './response';
 import { AddCORSHeader, HandlePreflight } from './cors';
 import { ServeStatic } from './static';
@@ -63,6 +63,9 @@ export class Rivet {
     private plugins: RivetPlugin[] = [];
     private middlewares: Middleware[] = [];
 
+    // Error handlers, called when an error happens
+    private errorHandlers: Map<number, Function> = new Map();
+
     private server: Server | null = null;
     routes: {
         GET: RouteHandlers;
@@ -96,7 +99,7 @@ export class Rivet {
             this.OnRequest(req, res as RivetResponse);
         });
 
-        this.serverCallbacks.forEach(cb => cb(this.server)); // Call the callbacks
+        this.serverCallbacks.forEach((cb) => cb(this.server)); // Call the callbacks
 
         this.server.listen(port, () => {
             console.log(`Rivet fastened on ${port}`);
@@ -161,6 +164,11 @@ export class Rivet {
         };
     }
 
+    // Registers a new error handler
+    error(code: number, handler: Function) {
+        this.errorHandlers.set(code, handler);
+    }
+
     // Called when the server recives an request
     async OnRequest(req: IncomingMessage, res: RivetResponse): Promise<void> {
         // Run all the middleware
@@ -177,81 +185,109 @@ export class Rivet {
         await next();
     }
 
+    // Sends an error and calls the handler
+    SendError(error: number, req: IncomingMessage, res: RivetResponse) {
+        const handler = this.errorHandlers.get(error);
+
+        if (handler) {
+            InjectResponseHelpers(res);
+
+            handler(null, req, res); // Call the handler
+        } else {
+            // If there is no handler, use a generic one
+            // Set proper headers and body
+            res.writeHead(error, { 'Content-Type': 'text/plain' });
+            
+            let message = 'Internal Server Error';
+            if (error === 404) message = '404: Page not found';
+            if (error === 405) message = '405: Method Not Allowed';
+            if (error === 429) message = '429: Too Many Requests';
+        
+            res.end(message);
+        }
+    }
+
     // Called when after middleware runs
     async HandleRoute(req: IncomingMessage, res: RivetResponse): Promise<void> {
-        // Always apply CORS headers
-        AddCORSHeader(res, this.corsOptions);
+        try {
+            // Always apply CORS headers
+            AddCORSHeader(res, this.corsOptions);
 
-        // Handle preflight
-        if (HandlePreflight(req, res)) return;
+            // Handle preflight
+            if (HandlePreflight(req, res)) return;
 
-        const method = req.method as keyof typeof this.routes; // Get the HTTP method
-        const url = req.url?.split('?')[0] || '/'; // Get the URL and strip the query params
+            const method = req.method as keyof typeof this.routes; // Get the HTTP method
+            const url = req.url?.split('?')[0] || '/'; // Get the URL and strip the query params
 
-        // Parse query parameters
-        const urlObj = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
-        const query = Object.fromEntries(urlObj.searchParams);
-        (req as any).query = query;
+            // Parse query parameters
+            const urlObj = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
+            const query = Object.fromEntries(urlObj.searchParams);
+            (req as any).query = query;
 
-        // Parse body for POST, PUT, PATCH requests
-        if (method === 'POST' || method === 'PUT') {
-            try {
-                const body = await ParseBody(req);
-                (req as any).body = body;
-            } catch (err) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Invalid request body' }));
+            // Parse body for POST, PUT, PATCH requests
+            if (method === 'POST' || method === 'PUT') {
+                try {
+                    const body = await ParseBody(req);
+                    (req as any).body = body;
+                } catch (err) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Invalid request body' }));
+                    return;
+                }
+            }
+
+            const methodRoutes = this.routes[method];
+            if (!methodRoutes) {
+                res.writeHead(405, { 'Content-Type': 'text/plain' });
+                res.end('405: Method Not Allowed');
                 return;
             }
-        }
 
-        const methodRoutes = this.routes[method];
-        if (!methodRoutes) {
-            res.writeHead(405, { 'Content-Type': 'text/plain' });
-            res.end('405: Method Not Allowed');
-            return;
-        }
+            // Try exact match first (fast path)
+            let route = methodRoutes[url];
+            let params: Record<string, string> = {};
 
-        // Try exact match first (fast path)
-        let route = methodRoutes[url];
-        let params: Record<string, string> = {};
+            // If no exact match, try regex
+            if (!route) {
+                for (const [pattern, r] of Object.entries(methodRoutes)) {
+                    if (pattern.endsWith('*')) continue; // Check if "/*" or such
 
-        // If no exact match, try regex
-        if (!route) {
-            for (const [pattern, r] of Object.entries(methodRoutes)) {
-                if (pattern.endsWith('*')) continue; // Check if "/*" or such
-
-                const match = url.match(r.regex);
-                if (match) {
-                    route = r;
-                    // Extract params from capture groups
-                    r.params.forEach((paramName, index) => {
-                        params[paramName] = match[index + 1];
-                    });
-                    break;
+                    const match = url.match(r.regex);
+                    if (match) {
+                        route = r;
+                        // Extract params from capture groups
+                        r.params.forEach((paramName, index) => {
+                            params[paramName] = match[index + 1];
+                        });
+                        break;
+                    }
                 }
             }
-        }
 
-        // If still no match, try wildcard (static files)
-        if (!route) {
-            for (const [pattern, r] of Object.entries(methodRoutes)) {
-                if (pattern.endsWith('*') && url.startsWith(pattern.slice(0, -1))) {
-                    route = r;
-                    break;
+            // If still no match, try wildcard (static files)
+            if (!route) {
+                for (const [pattern, r] of Object.entries(methodRoutes)) {
+                    if (pattern.endsWith('*') && url.startsWith(pattern.slice(0, -1))) {
+                        route = r;
+                        break;
+                    }
                 }
             }
-        }
 
-        // If a handler was registered, call it
-        if (route && route.handler) {
-            InjectResponseHelpers(res); // Injects response helpers into the res object
-            (req as any).params = params;
+            // If a handler was registered, call it
+            if (route && route.handler) {
+                InjectResponseHelpers(res); // Injects response helpers into the res object
+                (req as any).params = params;
 
-            await route.handler(req, res); // Now finnaly, call the handler
-        } else {
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end('404: Page not found!');
+                await route.handler(req, res); // Now finnaly, call the handler
+            } else {
+                this.SendError(404, req, res);
+                return;
+            }
+        } catch (err) {
+            const statusCode = (err as any).statusCode || 500;
+
+            this.SendError(statusCode, req, res);
         }
     }
 
@@ -264,8 +300,7 @@ export class Rivet {
             handler: async (req: IncomingMessage, res: RivetResponse) => {
                 const served = await StaticHandler(req, res);
                 if (!served) {
-                    res.writeHead(404, { 'Content-Type': 'text/plain' });
-                    res.end('404: File not found!');
+                    this.SendError(404, req, res);
                 }
             },
             params: [],

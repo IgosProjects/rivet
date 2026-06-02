@@ -18,6 +18,17 @@ export type RouteHandlers = {
     [key: string]: Route; // Changed from Function to Route
 };
 
+// Add to your types file
+export class HttpError extends Error {
+    statusCode: number
+    
+    constructor(statusCode: number, message: string) {
+        super(message)
+        this.statusCode = statusCode
+        this.name = 'HttpError'
+    }
+}
+
 // HTTP response type
 export type RivetResponse = ServerResponse & {
     send: (data: any) => void;
@@ -39,3 +50,10 @@ export interface RivetPlugin {
 }
 
 export type Middleware = (req: IncomingMessage, res: RivetResponse, next: () => void) => void;
+
+export type RatelimitConfig = {
+    enabled: boolean;
+    window: number;
+    max: number;
+    message: string;
+};

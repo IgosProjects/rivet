@@ -4,59 +4,19 @@
 */
 
 import http from 'http';
-import type { RivetResponse, RouteHandlers, CorsOptions, RivetPlugin, Middleware, HttpError } from './types';
+import type {
+    RivetResponse,
+    RouteHandlers,
+    CorsOptions,
+    RivetPlugin,
+    Middleware,
+    HttpError,
+} from './types';
 import { InjectResponseHelpers } from './response';
-import { AddCORSHeader, HandlePreflight } from './cors';
+import { HandleRoute } from './route';
 import { ServeStatic } from './static';
 
 import type { IncomingMessage, Server, ServerResponse } from 'http';
-
-// Parses the request body
-async function ParseBody(req: IncomingMessage): Promise<any> {
-    return new Promise((resolve, reject) => {
-        const chunks: Buffer[] = [];
-
-        req.on('data', (chunk) => {
-            chunks.push(chunk);
-        });
-
-        req.on('end', () => {
-            const body = Buffer.concat(chunks).toString();
-
-            // No body
-            if (!body) {
-                resolve({});
-                return;
-            }
-
-            // Check content type
-            const contentType = req.headers['content-type'] || '';
-
-            if (contentType.includes('application/json')) {
-                try {
-                    resolve(JSON.parse(body));
-                } catch (e) {
-                    resolve({});
-                }
-            } else if (contentType.includes('application/x-www-form-urlencoded')) {
-                // Parse form data: "name=Alice&age=30" → { name: "Alice", age: "30" }
-                const params = new URLSearchParams(body);
-                const result: Record<string, string> = {};
-                params.forEach((value, key) => {
-                    result[key] = value;
-                });
-                resolve(result);
-            } else {
-                // Plain text
-                resolve(body);
-            }
-        });
-
-        req.on('error', (err) => {
-            reject(err);
-        });
-    });
-}
 
 // Main library class
 export class Rivet {
@@ -86,6 +46,7 @@ export class Rivet {
 
     private corsOptions: CorsOptions = {};
     private serverCallbacks: Array<(server: any) => void> = [];
+    private rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
     // Allows editing of CORS options before the server is started, or while its running
     cors(options: CorsOptions): this {
@@ -123,6 +84,34 @@ export class Rivet {
     use(plugin: RivetPlugin): this {
         plugin.install(this); // Call the install function
         this.plugins.push(plugin);
+        return this;
+    }
+
+    // Allows the server to ratelimit clients so they cannot perform a DDOS attack or overload the server
+    RateLimit(options: { max?: number; window?: number } = {}) {
+        const max = options.max || 100;
+        const window = options.window || 60000;
+
+        this.UseMiddleware((req, res, next) => {
+            const ip = req.socket.remoteAddress || 'unknown';
+            const now = Date.now();
+            let record = this.rateLimitStore.get(ip);
+
+            if (!record || now > record.resetTime) {
+                record = { count: 0, resetTime: now + window };
+                this.rateLimitStore.set(ip, record);
+            }
+
+            if (record.count >= max) {
+                res.writeHead(429, { 'Content-Type': 'text/plain' });
+                res.end('Too many requests');
+                return;
+            }
+
+            record.count++;
+            next();
+        });
+
         return this;
     }
 
@@ -178,7 +167,7 @@ export class Rivet {
                 const middleware = this.middlewares[index++];
                 await middleware(req, res, next);
             } else {
-                await this.HandleRoute(req, res);
+                await HandleRoute(req, res, this.corsOptions, this.routes, this.SendError.bind(this));
             }
         };
 
@@ -197,97 +186,13 @@ export class Rivet {
             // If there is no handler, use a generic one
             // Set proper headers and body
             res.writeHead(error, { 'Content-Type': 'text/plain' });
-            
+
             let message = 'Internal Server Error';
             if (error === 404) message = '404: Page not found';
             if (error === 405) message = '405: Method Not Allowed';
             if (error === 429) message = '429: Too Many Requests';
-        
+
             res.end(message);
-        }
-    }
-
-    // Called when after middleware runs
-    async HandleRoute(req: IncomingMessage, res: RivetResponse): Promise<void> {
-        try {
-            // Always apply CORS headers
-            AddCORSHeader(res, this.corsOptions);
-
-            // Handle preflight
-            if (HandlePreflight(req, res)) return;
-
-            const method = req.method as keyof typeof this.routes; // Get the HTTP method
-            const url = req.url?.split('?')[0] || '/'; // Get the URL and strip the query params
-
-            // Parse query parameters
-            const urlObj = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
-            const query = Object.fromEntries(urlObj.searchParams);
-            (req as any).query = query;
-
-            // Parse body for POST, PUT, PATCH requests
-            if (method === 'POST' || method === 'PUT') {
-                try {
-                    const body = await ParseBody(req);
-                    (req as any).body = body;
-                } catch (err) {
-                    res.writeHead(400, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ error: 'Invalid request body' }));
-                    return;
-                }
-            }
-
-            const methodRoutes = this.routes[method];
-            if (!methodRoutes) {
-                res.writeHead(405, { 'Content-Type': 'text/plain' });
-                res.end('405: Method Not Allowed');
-                return;
-            }
-
-            // Try exact match first (fast path)
-            let route = methodRoutes[url];
-            let params: Record<string, string> = {};
-
-            // If no exact match, try regex
-            if (!route) {
-                for (const [pattern, r] of Object.entries(methodRoutes)) {
-                    if (pattern.endsWith('*')) continue; // Check if "/*" or such
-
-                    const match = url.match(r.regex);
-                    if (match) {
-                        route = r;
-                        // Extract params from capture groups
-                        r.params.forEach((paramName, index) => {
-                            params[paramName] = match[index + 1];
-                        });
-                        break;
-                    }
-                }
-            }
-
-            // If still no match, try wildcard (static files)
-            if (!route) {
-                for (const [pattern, r] of Object.entries(methodRoutes)) {
-                    if (pattern.endsWith('*') && url.startsWith(pattern.slice(0, -1))) {
-                        route = r;
-                        break;
-                    }
-                }
-            }
-
-            // If a handler was registered, call it
-            if (route && route.handler) {
-                InjectResponseHelpers(res); // Injects response helpers into the res object
-                (req as any).params = params;
-
-                await route.handler(req, res); // Now finnaly, call the handler
-            } else {
-                this.SendError(404, req, res);
-                return;
-            }
-        } catch (err) {
-            const statusCode = (err as any).statusCode || 500;
-
-            this.SendError(statusCode, req, res);
         }
     }
 

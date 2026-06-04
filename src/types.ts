@@ -20,20 +20,33 @@ export type RouteHandlers = {
 
 // Add to your types file
 export class HttpError extends Error {
-    statusCode: number
-    
+    statusCode: number;
+
     constructor(statusCode: number, message: string) {
-        super(message)
-        this.statusCode = statusCode
-        this.name = 'HttpError'
+        super(message);
+        this.statusCode = statusCode;
+        this.name = 'HttpError';
     }
+}
+
+// Cookie options
+export interface CookieOptions {
+    httpOnly?: boolean;
+    secure?: boolean;
+    maxAge?: number;
+    path?: string;
+    domain?: string;
+    sameSite?: 'Strict' | 'Lax' | 'None';
 }
 
 // HTTP response type
 export type RivetResponse = ServerResponse & {
     send: (data: any) => void;
+    sendAsType: (data: any, type: string) => void;
     json: (data: any) => void;
     SendFile: (filePath: string, contentType?: string) => void;
+    SetCookie: (name: string, value: string, options?: CookieOptions) => void;
+    ClearCookie: (name: string, options?: CookieOptions) => void;
 };
 
 export interface CorsOptions {

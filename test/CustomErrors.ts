@@ -6,10 +6,10 @@ import { Rivet, RivetResponse } from '../src/index';
 const app = new Rivet();
 
 app.error(404, (err: string, req: IncomingMessage, res: RivetResponse) => {
-    res.send("404");
-    res.send("Page not found");
-    res.send("Undertext");
-    res.send("Underundertext");
+    res.send('404');
+    res.send('Page not found');
+    res.send('Undertext');
+    res.send('Underundertext');
 });
 
 // This function is called when the route "/" is called

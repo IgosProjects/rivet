@@ -1,6 +1,11 @@
+/*
+    This file is licensed under the MIT license, the terms must be followed!
+    Copyright(c) 2026 EyeDev
+*/
+
 import fs from 'fs';
 import path from 'path';
-import { RivetResponse } from './types';
+import { RivetResponse, CookieOptions } from './types';
 import { GetMimeType } from './mime';
 
 export function InjectResponseHelpers(res: RivetResponse): void {
@@ -8,6 +13,11 @@ export function InjectResponseHelpers(res: RivetResponse): void {
         res.writeHead(200, { 'Content-Type': 'text/plain' });
         res.end(String(data));
     };
+
+    res.sendAsType = (data: any, type: string) => {
+        res.writeHead(200, { 'Content-Type': type });
+        res.end(String(data));
+    }
 
     res.json = (data: any) => {
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -40,5 +50,22 @@ export function InjectResponseHelpers(res: RivetResponse): void {
                 res.end('500: Internal Server Error');
             });
         });
+    };
+
+    // Sets a cookie with the name to the value
+    res.SetCookie = (name: string, value: string, options: CookieOptions = {}) => {
+        let cookie = `${name}=${encodeURIComponent(value)}`;
+        if (options.httpOnly) cookie += '; HttpOnly';
+        if (options.secure) cookie += '; Secure';
+        if (options.maxAge) cookie += `; Max-Age=${options.maxAge}`;
+        if (options.path) cookie += `; Path=${options.path || '/'}`;
+        if (options.domain) cookie += `; Domain=${options.domain}`;
+        if (options.sameSite) cookie += `; SameSite=${options.sameSite}`;
+        res.setHeader('Set-Cookie', cookie);
+    };
+
+    // Clears a cookie with the following name and deletes it
+    res.ClearCookie = (name: string, options: CookieOptions = {}) => {
+        res.SetCookie(name, '', { ...options, maxAge: 0 });
     };
 }

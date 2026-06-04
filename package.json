@@ -1,6 +1,6 @@
 {
   "name": "@igosprojects/rivet",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Rivet is a small server framework for NodeJS",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

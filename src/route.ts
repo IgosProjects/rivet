@@ -13,7 +13,6 @@ import type { IncomingMessage } from 'http';
 
 // Called when after middleware runs, handles the route
 export async function HandleRoute(
-    this: Rivet,
     req: IncomingMessage,
     res: RivetResponse,
     corsOptions: CorsOptions,
@@ -92,7 +91,7 @@ export async function HandleRoute(
 
             await route.handler(req, res); // Now finnaly, call the handler
         } else {
-            this.SendError(404, req, res);
+            sendError(404, req, res);
             return;
         }
     } catch (err) {

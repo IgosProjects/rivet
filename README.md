@@ -5,7 +5,7 @@
 ![TypeScript](https://img.shields.io/github/languages/top/IgosProjects/rivet)
 [![Discord](https://img.shields.io/badge/chat-discord-blue.svg)](https://bit.ly/rivetjs_discord)
 
-Rivet is a small Typescript based server platform for NodeJS, it is a Express inspired library for servers, more info can be found on the docs site
+Rivet is a small Typescript based server platform for NodeJS, it is a Express inspired library for servers, more info can be found on the docs site. If you enjoy using Rivet please star in on Github!
 
 ## Chatting
 

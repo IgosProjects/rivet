@@ -56,15 +56,18 @@ export class Rivet {
     }
 
     // Starts the HTTP server and serves on the provided port
-    start(port: number, callback?: () => void): void {
+    // NOTE: Calling with host as '0.0.0.0' will output to all interfaces! Add auth for production
+    start(port: number, host?: string, callback?: () => void): void {
         this.server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
             this.OnRequest(req, res as RivetResponse);
         });
 
         this.serverCallbacks.forEach((cb) => cb(this.server)); // Call the callbacks
 
-        this.server.listen(port, () => {
-            console.log(`Rivet fastened on ${port}`);
+        const ListenHost = host || 'localhost'; // If an IP is passed the server will run on it!
+
+        this.server.listen(port, ListenHost, () => {
+            console.log(`Rivet fastened on ${ListenHost}:${port}`);
             callback?.();
         });
     }

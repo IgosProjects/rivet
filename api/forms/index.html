@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://igosprojects.github.io/rivet-docs/api/static/">
+        <link rel="canonical" href="https://igosprojects.github.io/rivet-docs/api/forms/">
       
       
-        <link rel="prev" href="../forms/">
+        <link rel="prev" href="../error/">
       
       
-        <link rel="next" href="../../tutorial/creating/">
+        <link rel="next" href="../static/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Static - Rivet</title>
+        <title>Forms - Rivet</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#static-files" class="md-skip">
+        <a href="#normal-formstext-only" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Static
+              Forms
             
           </span>
         </div>
@@ -393,29 +393,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../forms/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Forms
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -431,7 +408,7 @@
   
   
   <span class="md-ellipsis">
-    Static
+    Forms
     
   </span>
   
@@ -444,7 +421,7 @@
   
   
   <span class="md-ellipsis">
-    Static
+    Forms
     
   </span>
   
@@ -465,9 +442,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#static-files" class="md-nav__link">
+  <a href="#normal-formstext-only" class="md-nav__link">
     <span class="md-ellipsis">
-      Static files
+      NORMAL FORMS(text only)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#text" class="md-nav__link">
+    <span class="md-ellipsis">
+      Text
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multipart-formsfile-and-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      MULTIPART FORMS(file and text)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#text_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Text
     </span>
   </a>
   
@@ -477,6 +490,29 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../static/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Static
+    
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -606,12 +642,28 @@
   
 
 
-  <h1>Static</h1>
+  <h1>Forms</h1>
 
-<h2 id="static-files">Static files</h2>
-<p>Static files in Rivet can be served using the <code>app.static</code> method, the method accepts a prefix and a directory path. 
-For example running this will serve the files from "/public" to "/"
-<code>app.static("/public", "/");</code></p>
+<h2 id="normal-formstext-only">NORMAL FORMS(text only)</h2>
+<h2 id="text">Text</h2>
+<p>In normal HTML forms you can use the <code>req.body</code> variable, since they are passed on the HTTP body instead of a special field.
+For example this code will print the passed in name to the console(the usage is the same but "req.fields" is changed to "req.body")
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nx">app</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="o">:</span><span class="w"> </span><span class="kt">IncommingMessage</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="o">:</span><span class="w"> </span><span class="kt">RivetResponse</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">name</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span><span class="w"> </span><span class="c1">// Get the name field</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">})</span>
+</code></pre></div></p>
+<h2 id="multipart-formsfile-and-text">MULTIPART FORMS(file and text)</h2>
+<h2 id="files">Files</h2>
+<p>File uploads in Rivet are pretty simple, all the files uploaded on that request are put into <code>req.files</code>.
+To get a specific file you can use the <code>req.file()</code> method with the file name passed in.</p>
+<h2 id="text_1">Text</h2>
+<p>Unlike non multipart forms to get the text in a form using Rivet you can use the <code>req.fields</code> variable. For example, this code will print the uploaded name to the console: 
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nx">app</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="o">:</span><span class="w"> </span><span class="kt">IncommingMessage</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="o">:</span><span class="w"> </span><span class="kt">RivetResponse</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">name</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">fields</span><span class="p">;</span><span class="w"> </span><span class="c1">// Get the name field</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">})</span>
+</code></pre></div></p>
 
 
 

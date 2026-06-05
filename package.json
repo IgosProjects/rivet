@@ -42,5 +42,8 @@
   "bugs": {
     "url": "https://github.com/IgosProjects/rivet/issues"
   },
-  "homepage": "https://github.com/IgosProjects/rivet#readme"
+  "homepage": "https://github.com/IgosProjects/rivet#readme",
+  "dependencies": {
+    "busboy": "^1.6.0"
+  }
 }

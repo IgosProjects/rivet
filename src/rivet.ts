@@ -4,6 +4,7 @@
 */
 
 import http from 'http';
+import busboy from 'busboy';
 import type {
     RivetResponse,
     RouteHandlers,
@@ -124,8 +125,6 @@ export class Rivet {
             paramNames.push(paramName);
             return '([^/]+)'; // Capture anything except slash
         });
-
-        console.log('Path:', path, '→ Regex:', regexPattern); // Debug
 
         // Create regex that matches exactly
         const regex = new RegExp(`^${regexPattern}$`);

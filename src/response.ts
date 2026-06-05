@@ -17,7 +17,7 @@ export function InjectResponseHelpers(res: RivetResponse): void {
     res.sendAsType = (data: any, type: string) => {
         res.writeHead(200, { 'Content-Type': type });
         res.end(String(data));
-    }
+    };
 
     res.json = (data: any) => {
         res.writeHead(200, { 'Content-Type': 'application/json' });

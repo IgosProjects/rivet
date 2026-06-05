@@ -7,9 +7,35 @@ import { AddCORSHeader, HandlePreflight } from './cors';
 import type { CorsOptions, RivetResponse, RouteHandlers } from './types';
 import { Rivet } from './rivet';
 import { ParseBody } from './body';
+import busboy from 'busboy'
 import { InjectResponseHelpers } from './response';
 
 import type { IncomingMessage } from 'http';
+
+function ParseMultipart(req: IncomingMessage): Promise<{ fields: any; files: any }> {
+    return new Promise((resolve, reject) => {
+        const bb = busboy({ headers: req.headers });
+        const fields: any = {};
+        const files: any = {};
+        
+        bb.on('field', (name: any, value: any) => { fields[name] = value; });
+        bb.on('file', (name: any, file: any, info: any) => {
+            const chunks: Buffer[] = [];
+            file.on('data', (chunk: any) => chunks.push(chunk));
+            file.on('end', () => {
+                files[name] = {
+                    filename: info.filename,
+                    mimeType: info.mimeType,
+                    data: Buffer.concat(chunks),
+                    size: chunks.reduce((acc, c) => acc + c.length, 0)
+                };
+            });
+        });
+        bb.on('finish', () => resolve({ fields, files }));
+        bb.on('error', reject);
+        req.pipe(bb);
+    });
+}
 
 // Called when after middleware runs, handles the route
 export async function HandleRoute(
@@ -34,15 +60,27 @@ export async function HandleRoute(
         const query = Object.fromEntries(urlObj.searchParams);
         (req as any).query = query;
 
-        // Parse body for POST, PUT, PATCH requests
+        const contentType = req.headers['content-type'] || '';
+
+        // Handle different content types
         if (method === 'POST' || method === 'PUT') {
-            try {
-                const body = await ParseBody(req);
-                (req as any).body = body;
-            } catch (err) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Invalid request body' }));
-                return;
+            if (
+                contentType.includes('application/json') ||
+                contentType.includes('application/x-www-form-urlencoded')
+            ) {
+                try {
+                    (req as any).body = await ParseBody(req);
+                } catch (err) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Invalid request body' }));
+                    return;
+                }
+            } else if (contentType.includes('multipart/form-data')) {
+                // Handle form data
+
+                const { fields, files } = await ParseMultipart(req);
+                (req as any).fields = fields;
+                (req as any).files = files;
             }
         }
 
@@ -95,9 +133,9 @@ export async function HandleRoute(
             return;
         }
     } catch (err) {
-        console.log("Route handler has encountered an exception!");
-        console.error("Error details:", err);
-        console.error("Error stack:", (err as any).stack);
+        console.log('Route handler has encountered an exception!');
+        console.error('Error details:', err);
+        console.error('Error stack:', (err as any).stack);
 
         const statusCode = (err as any).statusCode || 500;
 

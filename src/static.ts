@@ -35,9 +35,9 @@ export function ServeStatic(rootDir: string) {
             // Serve the file
             const mimeType = GetMimeType(filePath);
             const stream = fs.createReadStream(filePath);
-            const contentType = mimeType.startsWith('text/') 
-            ? `${mimeType}; charset=utf-8` 
-            : mimeType;
+            const contentType = mimeType.startsWith('text/')
+                ? `${mimeType}; charset=utf-8`
+                : mimeType;
 
             res.writeHead(200, { 'Content-Type': contentType });
             stream.pipe(res);

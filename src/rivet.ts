@@ -166,7 +166,13 @@ export class Rivet {
                 const middleware = this.middlewares[index++];
                 await middleware(req, res, next);
             } else {
-                await HandleRoute(req, res, this.corsOptions, this.routes, this.SendError.bind(this));
+                await HandleRoute(
+                    req,
+                    res,
+                    this.corsOptions,
+                    this.routes,
+                    this.SendError.bind(this)
+                );
             }
         };
 

@@ -96,7 +96,8 @@ app.get('/', (req, res) => {
             </script>
         </body>
         </html>
-    `, 'text/html'
+    `,
+        'text/html'
     );
 });
 

@@ -30,6 +30,7 @@
   "license": "MIT",
   "packageManager": "pnpm@10.33.0",
   "devDependencies": {
+    "@types/busboy": "^1.5.4",
     "@types/node": "^25.9.1",
     "prettier": "^3.8.3",
     "ts-node": "^10.9.2",

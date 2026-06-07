@@ -36,7 +36,7 @@ app.get('/update-theme/:newTheme', (req, res) => {
 
 // Clear a cookie
 app.get('/clear-theme', (req, res) => {
-    res.clearCookie('theme');
+    res.ClearCookie('theme');
     res.send('Theme cookie cleared!');
 });
 

@@ -43,9 +43,22 @@ export async function HandleRoute(
     res: RivetResponse,
     corsOptions: CorsOptions,
     routes: { GET: RouteHandlers; POST: RouteHandlers; PUT: RouteHandlers; DELETE: RouteHandlers },
+    subApps: Map<string, Rivet>,
     sendError: (error: number, req: IncomingMessage, res: RivetResponse) => void
 ): Promise<void> {
     try {
+        const url = req.url?.split('?')[0] || '/';
+        
+        // Check if request matches any mounted sub-app
+        for (const [prefix, subApp] of subApps) {
+            if (url.startsWith(prefix)) {
+                // Rewrite URL: remove prefix
+                req.url = url.slice(prefix.length) || '/';
+                // Delegate to sub-app
+                return subApp.OnRequest(req, res);
+            }
+        }
+        
         // Always apply CORS headers
         AddCORSHeader(res, corsOptions);
 
@@ -53,7 +66,6 @@ export async function HandleRoute(
         if (HandlePreflight(req, res)) return;
 
         const method = req.method as keyof typeof routes; // Get the HTTP method
-        const url = req.url?.split('?')[0] || '/'; // Get the URL and strip the query params
 
         // Parse query parameters
         const urlObj = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);

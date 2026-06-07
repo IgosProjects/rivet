@@ -18,6 +18,7 @@ import { HandleRoute } from './route';
 import { ServeStatic } from './static';
 
 import type { IncomingMessage, Server, ServerResponse } from 'http';
+import Stream from 'stream';
 
 // Main library class
 export class Rivet {
@@ -46,6 +47,7 @@ export class Rivet {
     }
 
     private corsOptions: CorsOptions = {};
+    private subApps: Map<string, Rivet> = new Map;
     private serverCallbacks: Array<(server: any) => void> = [];
     private rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
@@ -53,6 +55,11 @@ export class Rivet {
     cors(options: CorsOptions): this {
         this.corsOptions = { ...this.corsOptions, ...options };
         return this;
+    }
+
+    // Allows for branching apps to the current app, when requests to the passed prefix are sent the subapp is called
+    branch(prefix: string, app: Rivet) {
+        this.subApps.set(prefix, app); // Set the prefix in the directory to the Rivet app
     }
 
     // Starts the HTTP server and serves on the provided port
@@ -174,6 +181,7 @@ export class Rivet {
                     res,
                     this.corsOptions,
                     this.routes,
+                    this.subApps,
                     this.SendError.bind(this)
                 );
             }

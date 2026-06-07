@@ -2,34 +2,38 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://igosprojects.github.io/rivet-docs/</loc>
-         <lastmod>2026-06-05</lastmod>
+         <lastmod>2026-06-07</lastmod>
     </url>
     <url>
          <loc>https://igosprojects.github.io/rivet-docs/api/arguments/</loc>
-         <lastmod>2026-06-05</lastmod>
+         <lastmod>2026-06-07</lastmod>
     </url>
     <url>
          <loc>https://igosprojects.github.io/rivet-docs/api/bodyparsing/</loc>
-         <lastmod>2026-06-05</lastmod>
+         <lastmod>2026-06-07</lastmod>
     </url>
     <url>
          <loc>https://igosprojects.github.io/rivet-docs/api/error/</loc>
-         <lastmod>2026-06-05</lastmod>
+         <lastmod>2026-06-07</lastmod>
     </url>
     <url>
          <loc>https://igosprojects.github.io/rivet-docs/api/forms/</loc>
-         <lastmod>2026-06-05</lastmod>
+         <lastmod>2026-06-07</lastmod>
     </url>
     <url>
          <loc>https://igosprojects.github.io/rivet-docs/api/static/</loc>
-         <lastmod>2026-06-05</lastmod>
+         <lastmod>2026-06-07</lastmod>
     </url>
     <url>
-         <loc>https://igosprojects.github.io/rivet-docs/tutorial/creating/</loc>
-         <lastmod>2026-06-05</lastmod>
+         <loc>https://igosprojects.github.io/rivet-docs/tutorial/coding/</loc>
+         <lastmod>2026-06-07</lastmod>
     </url>
     <url>
-         <loc>https://igosprojects.github.io/rivet-docs/tutorial/intro/</loc>
-         <lastmod>2026-06-05</lastmod>
+         <loc>https://igosprojects.github.io/rivet-docs/tutorial/running/</loc>
+         <lastmod>2026-06-07</lastmod>
+    </url>
+    <url>
+         <loc>https://igosprojects.github.io/rivet-docs/tutorial/setup/</loc>
+         <lastmod>2026-06-07</lastmod>
     </url>
 </urlset>

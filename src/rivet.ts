@@ -162,6 +162,18 @@ export class Rivet {
         };
     }
 
+    // Registers a new PUT handler
+    put(path: string, handler: Function): void {
+        const { regex, paramNames } = this.ParsePath(path);
+        this.routes.PUT[path] = { handler, params: paramNames, regex };
+    }
+
+    // Registers a new DELETE handler
+    delete(path: string, handler: Function): void {
+        const { regex, paramNames } = this.ParsePath(path);
+        this.routes.DELETE[path] = { handler, params: paramNames, regex };
+    }
+
     // Registers a new error handler
     error(code: number, handler: Function) {
         this.errorHandlers.set(code, handler);

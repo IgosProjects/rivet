@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://igosprojects.github.io/rivet-docs/tutorial/running/">
+        <link rel="canonical" href="https://igosprojects.github.io/rivet-docs/api/branching/">
       
       
-        <link rel="prev" href="../coding/">
+        <link rel="prev" href="../bodyparsing/">
       
       
-        <link rel="next" href="../setup/">
+        <link rel="next" href="../error/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Running - Rivet</title>
+        <title>Branching - Rivet</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#typescript" class="md-skip">
+        <a href="#branching" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Running
+              Branching
             
           </span>
         </div>
@@ -301,8 +301,10 @@
       
   
   
+    
   
   
+  
     
     
     
@@ -313,13 +315,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
@@ -335,7 +335,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Api
@@ -349,7 +349,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/arguments/" class="md-nav__link">
+      <a href="../arguments/" class="md-nav__link">
         
   
   
@@ -372,7 +372,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/bodyparsing/" class="md-nav__link">
+      <a href="../bodyparsing/" class="md-nav__link">
         
   
   
@@ -392,10 +392,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../api/branching/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Branching
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -406,6 +426,42 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#branching" class="md-nav__link">
+    <span class="md-ellipsis">
+      Branching
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      ARGUMENTS
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -418,7 +474,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/error/" class="md-nav__link">
+      <a href="../error/" class="md-nav__link">
         
   
   
@@ -441,7 +497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/forms/" class="md-nav__link">
+      <a href="../forms/" class="md-nav__link">
         
   
   
@@ -464,7 +520,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/static/" class="md-nav__link">
+      <a href="../static/" class="md-nav__link">
         
   
   
@@ -589,8 +645,6 @@
       
   
   
-    
-  
   
   
     
@@ -603,11 +657,13 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
@@ -623,7 +679,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Tutorial
@@ -637,7 +693,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../coding/" class="md-nav__link">
+      <a href="../../tutorial/coding/" class="md-nav__link">
         
   
   
@@ -657,30 +713,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Running
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../tutorial/running/" class="md-nav__link">
         
   
   
@@ -691,33 +727,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#typescript" class="md-nav__link">
-    <span class="md-ellipsis">
-      Typescript
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -730,7 +739,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../setup/" class="md-nav__link">
+      <a href="../../tutorial/setup/" class="md-nav__link">
         
   
   
@@ -772,22 +781,14 @@
   
 
 
-  <h1>Running</h1>
+  <h1>Branching</h1>
 
-<p>To run your newly created Rivet app you will need to run it using Node, if you are on Typescript read <a href="#typescript">#typescript</a>.
-So running on raw Node is easy you just need to do:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>node<span class="w"> </span>PATH_TO_FILE
-</code></pre></div>
-So if your file is <code>index.js</code> you can do:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>node<span class="w"> </span>index.js
-</code></pre></div></p>
-<h2 id="typescript">Typescript</h2>
-<p>On Typescript you will first need to compile, so you can run:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>npx<span class="w"> </span>tsc
-</code></pre></div>
-That should produce source files depending on where you configured the <code>outDir</code>setting, for me its in the same folder as the source so i can run:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>node<span class="w"> </span>index.js
-</code></pre></div></p>
+<h2 id="branching">Branching</h2>
+<p>Branching in Rivet works by using the <code>app.branch</code> function.
+The function allows for you to "branch" another Rivet app to the current one. When the any requests to <code>prefix/*</code> are made, they will be passed down to the app attached</p>
+<h2 id="arguments">ARGUMENTS</h2>
+<p>The first argument to <code>app.branch</code> is the prefix, for example "/api".
+The second argument is the app to attach to the current app, for example "APIApp"</p>
 
 
 

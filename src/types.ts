@@ -9,6 +9,7 @@ import type { Rivet } from './rivet';
 // New route type, replaced old simple one
 export type Route = {
     handler: Function;
+    middlewares: Array<Middleware>;
     params: string[]; // Store param names like ['id', 'name']
     regex: RegExp; // Converted regex for matching
 };

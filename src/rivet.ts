@@ -143,35 +143,37 @@ export class Rivet {
     }
 
     // Registers a new GET handler
-    get(path: string, handler: Function): void {
+    get(path: string, handler: Function, middlewares?: Array<Middleware>): void {
         const { regex, paramNames } = this.ParsePath(path);
         this.routes.GET[path] = {
             handler,
             params: paramNames,
             regex,
+            middlewares: middlewares ?? []
         };
     }
 
     // Registers a new POST handler
-    post(path: string, handler: Function): void {
+    post(path: string, handler: Function, middlewares?: Array<Middleware>): void {
         const { regex, paramNames } = this.ParsePath(path);
         this.routes.POST[path] = {
             handler,
             params: paramNames,
             regex,
+            middlewares: middlewares ?? []
         };
     }
 
     // Registers a new PUT handler
-    put(path: string, handler: Function): void {
+    put(path: string, handler: Function, middlewares?: Array<Middleware>): void {
         const { regex, paramNames } = this.ParsePath(path);
-        this.routes.PUT[path] = { handler, params: paramNames, regex };
+        this.routes.PUT[path] = { handler, params: paramNames, regex, middlewares: middlewares ?? [] };
     }
 
     // Registers a new DELETE handler
-    delete(path: string, handler: Function): void {
+    delete(path: string, handler: Function, middlewares?: Array<Middleware>): void {
         const { regex, paramNames } = this.ParsePath(path);
-        this.routes.DELETE[path] = { handler, params: paramNames, regex };
+        this.routes.DELETE[path] = { handler, params: paramNames, regex, middlewares: middlewares ?? []};
     }
 
     // Registers a new error handler
@@ -179,27 +181,38 @@ export class Rivet {
         this.errorHandlers.set(code, handler);
     }
 
+    // Prompts the user to input a password before calling the main route handler
+    // Used for example in admin panels!
+    authenticate() {
+        
+    }
+
     // Called when the server recives an request
     async OnRequest(req: IncomingMessage, res: RivetResponse): Promise<void> {
         // Run all the middleware
         let index = 0;
-        const next = async () => {
+        let next = async () => {
             if (index < this.middlewares.length) {
                 const middleware = this.middlewares[index++];
                 await middleware(req, res, next);
             } else {
-                await HandleRoute(
-                    req,
-                    res,
-                    this.corsOptions,
-                    this.routes,
-                    this.subApps,
-                    this.SendError.bind(this)
-                );
+                
             }
         };
 
         await next();
+
+        index = 0
+    
+        // Now call the route handler
+        await HandleRoute(
+            req,
+            res,
+            this.corsOptions,
+            this.routes,
+            this.subApps,
+            this.SendError.bind(this)
+        );
     }
 
     // Sends an error and calls the handler
@@ -236,6 +249,7 @@ export class Rivet {
                     this.SendError(404, req, res);
                 }
             },
+            middlewares: [],
             params: [],
             regex: new RegExp(`^${prefix}.*$`),
         };

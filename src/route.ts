@@ -124,6 +124,18 @@ export async function HandleRoute(
             }
         }
 
+        // Run route specific middleware
+        let index = 0
+
+        const next = async () => {
+            if (index < route.middlewares.length) {
+                const middleware = route.middlewares[index++];
+                await middleware(req, res, next);
+            } else {
+                return;
+            }
+        };
+
         // If still no match, try wildcard (static files)
         if (!route) {
             for (const [pattern, r] of Object.entries(methodRoutes)) {
